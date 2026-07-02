@@ -16,6 +16,7 @@ function save(keys) {
     fs.writeFileSync(KEYS_FILE, JSON.stringify(keys, null, 4));
 }
 
+
 function createKey(name = "Unnamed") {
 
     const keys = load();
