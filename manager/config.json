@@ -1,4 +1,4 @@
 {
-    "server": "https://coconutdb-production.up.railway.app",
+    "server": "https://coconutdb-production.up.railway.app/",
     "masterKey": "cdb_7f2c51f1e5b844b5b1c4e7fdc0b3d89a9f2e18c8"
 }

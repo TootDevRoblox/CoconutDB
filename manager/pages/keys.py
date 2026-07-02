@@ -1,5 +1,6 @@
 import customtkinter as ctk
-
+from ui.loader import Loader
+import time
 import api
 
 
@@ -14,30 +15,13 @@ class KeysPage(ctk.CTkFrame):
             font=("Segoe UI", 28, "bold")
         )
 
-        title.pack(
-            anchor="w",
-            padx=25,
-            pady=(20, 10)
-        )
+        title.pack(anchor="w", padx=25, pady=(20, 10))
 
         top = ctk.CTkFrame(self)
+        top.pack(fill="x", padx=25)
 
-        top.pack(
-            fill="x",
-            padx=25
-        )
-
-        self.entry = ctk.CTkEntry(
-            top,
-            placeholder_text="Nome da Key"
-        )
-
-        self.entry.pack(
-            side="left",
-            fill="x",
-            expand=True,
-            padx=(0, 10)
-        )
+        self.entry = ctk.CTkEntry(top, placeholder_text="Nome da Key")
+        self.entry.pack(side="left", fill="x", expand=True, padx=(0, 10))
 
         ctk.CTkButton(
             top,
@@ -46,16 +30,13 @@ class KeysPage(ctk.CTkFrame):
         ).pack(side="left")
 
         self.list = ctk.CTkScrollableFrame(self)
-
-        self.list.pack(
-            fill="both",
-            expand=True,
-            padx=25,
-            pady=20
-        )
+        self.list.pack(fill="both", expand=True, padx=25, pady=20)
 
         self.refresh()
 
+    # =========================
+    # REFRESH LISTA
+    # =========================
     def refresh(self):
 
         for w in self.list.winfo_children():
@@ -65,55 +46,100 @@ class KeysPage(ctk.CTkFrame):
 
         for key in keys:
 
+            frame = ctk.CTkFrame(self)
             frame = ctk.CTkFrame(self.list)
 
-            frame.pack(
-                fill="x",
-                pady=5
-            )
+            frame.pack(fill="x", pady=5)
 
             ctk.CTkLabel(
                 frame,
-                text=key["name"]
-            ).pack(
-                side="left",
-                padx=15
-            )
+                text=key.get("name", "Sem nome")
+            ).pack(side="left", padx=15)
 
             ctk.CTkLabel(
                 frame,
-                text=key["key"]
-            ).pack(
-                side="left",
-                padx=20
-            )
+                text=key.get("key", "Sem chave")
+            ).pack(side="left", padx=20)
+
+            # 🔥 pega ID ou fallback pra key antiga
+            key_identifier = key.get("id") or key.get("key")
 
             ctk.CTkButton(
                 frame,
                 text="Excluir",
                 width=90,
-                command=lambda i=key["id"]: self.delete(i)
-            ).pack(
-                side="right",
-                padx=10,
-                pady=8
-            )
+                command=lambda k=key_identifier: self.delete(k)
+            ).pack(side="right", padx=10, pady=8)
 
+    # =========================
+    # CRIAR KEY
+    # =========================
     def create(self):
 
-        name = self.entry.get()
+        name = self.entry.get().strip()
 
         if not name:
             return
 
-        api.create_key(name)
+        loader = Loader(self, "Creating API Key")
 
-        self.entry.delete(0, "end")
+        loader.add("Connecting to server...")
+        loader.add("Authenticating...")
+        loader.add("Generating secure API Key...")
+        loader.add("Saving database...")
+        loader.add("Verifying integrity...")
+        loader.add("Refreshing Manager...")
+
+        # 1
+        loader.next()
+        time.sleep(0.2)
+        loader.success()
+
+        # 2
+        loader.next()
+        time.sleep(0.2)
+        loader.success()
+
+        # 3
+        loader.next()
+
+        response = api.create_key(name)
+
+        if not response.get("success"):
+            loader.error("Failed to create API Key.")
+            return
+
+        loader.success()
+
+        # 4
+        loader.next()
+        time.sleep(0.2)
+        loader.success()
+
+        # 5
+        loader.next()
+
+        loader.success()
+
+        # 6
+        loader.next()
 
         self.refresh()
 
-    def delete(self, id):
+        loader.success()
 
-        api.delete_key(id)
+        self.entry.delete(0, "end")
 
+        loader.finish("API Key created successfully!")
+        loader.after(800, loader.destroy)
+
+    # =========================
+    # DELETAR KEY
+    # =========================
+    def delete(self, key_id):
+
+        if not key_id:
+            return
+
+        api.delete_key(key_id)
         self.refresh()
