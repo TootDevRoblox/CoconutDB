@@ -90,6 +90,35 @@ router.get("/get/:datastore/:document", (req, res) => {
 
 });
 
+router.get("/all/:datastore", (req, res) => {
+    const datastore = req.params.datastore;
+
+    const datastoreFolder = path.join(
+        STORES_FOLDER,
+        datastore
+    );
+
+    if (!fs.existsSync(datastoreFolder)) {
+        return res.json([]);
+    }
+
+    const files = fs.readdirSync(datastoreFolder);
+
+    const data = files.map(file => {
+        const raw = fs.readFileSync(
+            path.join(datastoreFolder, file),
+            "utf8"
+        );
+
+        return {
+            name: file.replace(".json", ""),
+            value: JSON.parse(raw)
+        };
+    });
+
+    res.json(data);
+});
+
 router.get("/teste", (req, res) => {
     res.send("Documents funcionando!");
 });

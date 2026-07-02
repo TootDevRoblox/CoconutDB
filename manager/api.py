@@ -42,6 +42,13 @@ def create_key(name):
     except:
         return {"success": False}
 
+def get_documents(datastore):
+    response = requests.get(
+        SERVER + f"/document/all/{datastore}",
+        headers=headers()
+    )
+
+    return response.json()
 
 def delete_key(id):
     try:

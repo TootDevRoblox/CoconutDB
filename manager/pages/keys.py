@@ -34,6 +34,22 @@ class KeysPage(ctk.CTkFrame):
         self.refresh()
 
     # =========================
+    # COPY KEY
+    # =========================
+    def copy_key(self, key_value):
+        self.clipboard_clear()
+        self.clipboard_append(key_value)
+        self.update()
+        print("📋 Copied:", key_value)
+
+    # =========================
+    # OPEN DATASTORE
+    # =========================
+    def open_datastore(self, key_id):
+        print("OPEN DATASTORE:", key_id)
+        # aqui depois você troca pra abrir nova tela
+
+    # =========================
     # REFRESH
     # =========================
     def refresh(self):
@@ -48,30 +64,48 @@ class KeysPage(ctk.CTkFrame):
             frame = ctk.CTkFrame(self.list)
             frame.pack(fill="x", pady=5)
 
+            name = key.get("name", "Sem nome")
+            value = key.get("key", "Sem chave")
+            key_id = key.get("id")
+
             ctk.CTkLabel(
                 frame,
-                text=key.get("name", "Sem nome")
+                text=name
             ).pack(side="left", padx=15)
 
             ctk.CTkLabel(
                 frame,
-                text=key.get("key", "Sem chave")
+                text=value
             ).pack(side="left", padx=20)
 
-            key_id = key.get("id")
+            # COPY
+            ctk.CTkButton(
+                frame,
+                text="Copiar",
+                width=80,
+                command=lambda k=value: self.copy_key(k)
+            ).pack(side="right", padx=5)
 
+            # DELETE
             ctk.CTkButton(
                 frame,
                 text="Excluir",
-                width=90,
+                width=80,
                 command=lambda k=key_id: self.delete(k)
-            ).pack(side="right", padx=10, pady=8)
+            ).pack(side="right", padx=5)
+
+            # OPEN DATASTORE
+            ctk.CTkButton(
+                frame,
+                text="Open",
+                width=80,
+                command=lambda k=key_id: self.open_datastore(k)
+            ).pack(side="right", padx=5)
 
     # =========================
     # CREATE
     # =========================
     def create(self):
-
         name = self.entry.get().strip()
 
         if not name:
