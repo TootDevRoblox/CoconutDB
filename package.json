@@ -1,12 +1,24 @@
 {
   "name": "coconutdb",
   "version": "1.0.0",
-  "type": "commonjs",
+  "description": "CoconutDB API",
   "main": "api/server.js",
   "scripts": {
-    "start": "node api/server.js"
+    "start": "node api/server.js",
+    "dev": "node api/server.js"
   },
+  "keywords": [
+    "database",
+    "api",
+    "coconutdb"
+  ],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
   "dependencies": {
     "express": "^5.2.1"
+  },
+  "engines": {
+    "node": ">=18"
   }
 }
