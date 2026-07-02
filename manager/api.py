@@ -19,30 +19,37 @@ def headers():
 
 
 def get_keys():
-    response = requests.get(
-        SERVER + "/key/all",
-        headers=headers()
-    )
-
-    return response.json()
+    try:
+        response = requests.get(
+            SERVER + "/key/all",
+            headers=headers(),
+            timeout=10
+        )
+        return response.json()
+    except:
+        return []
 
 
 def create_key(name):
-    response = requests.post(
-        SERVER + "/key/create",
-        headers=headers(),
-        json={
-            "name": name
-        }
-    )
-
-    return response.json()
+    try:
+        response = requests.post(
+            SERVER + "/key/create",
+            headers=headers(),
+            json={"name": name},
+            timeout=10
+        )
+        return response.json()
+    except:
+        return {"success": False}
 
 
 def delete_key(id):
-    response = requests.delete(
-        SERVER + "/key/delete/" + id,
-        headers=headers()
-    )
-
-    return response.json()
+    try:
+        response = requests.delete(
+            SERVER + "/key/delete/" + str(id),
+            headers=headers(),
+            timeout=10
+        )
+        return response.json()
+    except:
+        return {"success": False}

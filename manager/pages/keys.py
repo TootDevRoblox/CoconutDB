@@ -14,7 +14,6 @@ class KeysPage(ctk.CTkFrame):
             text="API Keys",
             font=("Segoe UI", 28, "bold")
         )
-
         title.pack(anchor="w", padx=25, pady=(20, 10))
 
         top = ctk.CTkFrame(self)
@@ -35,7 +34,7 @@ class KeysPage(ctk.CTkFrame):
         self.refresh()
 
     # =========================
-    # REFRESH LISTA
+    # REFRESH
     # =========================
     def refresh(self):
 
@@ -46,9 +45,7 @@ class KeysPage(ctk.CTkFrame):
 
         for key in keys:
 
-            frame = ctk.CTkFrame(self)
             frame = ctk.CTkFrame(self.list)
-
             frame.pack(fill="x", pady=5)
 
             ctk.CTkLabel(
@@ -61,18 +58,17 @@ class KeysPage(ctk.CTkFrame):
                 text=key.get("key", "Sem chave")
             ).pack(side="left", padx=20)
 
-            # 🔥 pega ID ou fallback pra key antiga
-            key_identifier = key.get("id") or key.get("key")
+            key_id = key.get("id")
 
             ctk.CTkButton(
                 frame,
                 text="Excluir",
                 width=90,
-                command=lambda k=key_identifier: self.delete(k)
+                command=lambda k=key_id: self.delete(k)
             ).pack(side="right", padx=10, pady=8)
 
     # =========================
-    # CRIAR KEY
+    # CREATE
     # =========================
     def create(self):
 
@@ -90,17 +86,14 @@ class KeysPage(ctk.CTkFrame):
         loader.add("Verifying integrity...")
         loader.add("Refreshing Manager...")
 
-        # 1
         loader.next()
         time.sleep(0.2)
         loader.success()
 
-        # 2
         loader.next()
         time.sleep(0.2)
         loader.success()
 
-        # 3
         loader.next()
 
         response = api.create_key(name)
@@ -111,17 +104,13 @@ class KeysPage(ctk.CTkFrame):
 
         loader.success()
 
-        # 4
         loader.next()
         time.sleep(0.2)
         loader.success()
 
-        # 5
         loader.next()
-
         loader.success()
 
-        # 6
         loader.next()
 
         self.refresh()
@@ -134,7 +123,7 @@ class KeysPage(ctk.CTkFrame):
         loader.after(800, loader.destroy)
 
     # =========================
-    # DELETAR KEY
+    # DELETE
     # =========================
     def delete(self, key_id):
 

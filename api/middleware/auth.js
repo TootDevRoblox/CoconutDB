@@ -5,7 +5,10 @@ const KEY_FILE = path.join(__dirname, "../../database/keys.json");
 
 module.exports = (req, res, next) => {
 
-    const apiKey = req.headers["x-api-key"];
+    // 🔥 usa header padrão mais comum
+    const apiKey =
+        req.headers["x-api-key"] ||
+        req.headers["authorization"];
 
     if (!apiKey) {
         return res.status(401).json({
@@ -21,7 +24,15 @@ module.exports = (req, res, next) => {
         });
     }
 
-    const keys = JSON.parse(fs.readFileSync(KEY_FILE, "utf8"));
+    let keys;
+    try {
+        keys = JSON.parse(fs.readFileSync(KEY_FILE, "utf8"));
+    } catch (err) {
+        return res.status(500).json({
+            success: false,
+            message: "Failed to read keys database."
+        });
+    }
 
     const found = keys.find(k =>
         k.key === apiKey &&
@@ -35,9 +46,8 @@ module.exports = (req, res, next) => {
         });
     }
 
-    // Disponibiliza a key para as próximas rotas
+    // 🔐 expõe key validada
     req.apiKey = found;
 
     next();
-
 };
