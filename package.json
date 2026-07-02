@@ -1,15 +1,11 @@
 {
   "name": "coconutdb",
   "version": "1.0.0",
-  "description": "",
-  "main": "CoconutDB.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
   "type": "commonjs",
+  "main": "api/server.js",
+  "scripts": {
+    "start": "node api/server.js"
+  },
   "dependencies": {
     "express": "^5.2.1"
   }
