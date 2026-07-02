@@ -3,12 +3,17 @@ from ui.loader import Loader
 import time
 import api
 
+from pages.datastore_view import DatastoreView
+
 
 class KeysPage(ctk.CTkFrame):
 
     def __init__(self, master):
         super().__init__(master)
 
+        # =========================
+        # TITLE
+        # =========================
         title = ctk.CTkLabel(
             self,
             text="API Keys",
@@ -16,6 +21,9 @@ class KeysPage(ctk.CTkFrame):
         )
         title.pack(anchor="w", padx=25, pady=(20, 10))
 
+        # =========================
+        # TOP BAR
+        # =========================
         top = ctk.CTkFrame(self)
         top.pack(fill="x", padx=25)
 
@@ -28,6 +36,9 @@ class KeysPage(ctk.CTkFrame):
             command=self.create
         ).pack(side="left")
 
+        # =========================
+        # LIST
+        # =========================
         self.list = ctk.CTkScrollableFrame(self)
         self.list.pack(fill="both", expand=True, padx=25, pady=20)
 
@@ -36,21 +47,26 @@ class KeysPage(ctk.CTkFrame):
     # =========================
     # COPY KEY
     # =========================
-    def copy_key(self, key_value):
+    def copy_key(self, value):
         self.clipboard_clear()
-        self.clipboard_append(key_value)
+        self.clipboard_append(value)
         self.update()
-        print("📋 Copied:", key_value)
+        print("📋 Copied:", value)
 
     # =========================
     # OPEN DATASTORE
     # =========================
-    def open_datastore(self, key_id):
-        print("OPEN DATASTORE:", key_id)
-        # aqui depois você troca pra abrir nova tela
+    def open_datastore(self, datastore_id):
+
+        print("OPEN:", datastore_id)
+
+        self.destroy()
+
+        view = DatastoreView(self.master, datastore_id)
+        view.pack(fill="both", expand=True)
 
     # =========================
-    # REFRESH
+    # REFRESH KEYS
     # =========================
     def refresh(self):
 
@@ -58,6 +74,9 @@ class KeysPage(ctk.CTkFrame):
             w.destroy()
 
         keys = api.get_keys()
+
+        if not isinstance(keys, list):
+            return
 
         for key in keys:
 
@@ -68,11 +87,13 @@ class KeysPage(ctk.CTkFrame):
             value = key.get("key", "Sem chave")
             key_id = key.get("id")
 
+            # NAME
             ctk.CTkLabel(
                 frame,
                 text=name
             ).pack(side="left", padx=15)
 
+            # KEY VALUE
             ctk.CTkLabel(
                 frame,
                 text=value
@@ -83,7 +104,7 @@ class KeysPage(ctk.CTkFrame):
                 frame,
                 text="Copiar",
                 width=80,
-                command=lambda k=value: self.copy_key(k)
+                command=lambda v=value: self.copy_key(v)
             ).pack(side="right", padx=5)
 
             # DELETE
@@ -94,7 +115,7 @@ class KeysPage(ctk.CTkFrame):
                 command=lambda k=key_id: self.delete(k)
             ).pack(side="right", padx=5)
 
-            # OPEN DATASTORE
+            # OPEN (AGORA ABRE DATASTORE REAL)
             ctk.CTkButton(
                 frame,
                 text="Open",
@@ -103,9 +124,10 @@ class KeysPage(ctk.CTkFrame):
             ).pack(side="right", padx=5)
 
     # =========================
-    # CREATE
+    # CREATE KEY
     # =========================
     def create(self):
+
         name = self.entry.get().strip()
 
         if not name:
@@ -115,10 +137,10 @@ class KeysPage(ctk.CTkFrame):
 
         loader.add("Connecting to server...")
         loader.add("Authenticating...")
-        loader.add("Generating secure API Key...")
+        loader.add("Generating key...")
         loader.add("Saving database...")
-        loader.add("Verifying integrity...")
-        loader.add("Refreshing Manager...")
+        loader.add("Verifying...")
+        loader.add("Refreshing...")
 
         loader.next()
         time.sleep(0.2)
@@ -133,13 +155,9 @@ class KeysPage(ctk.CTkFrame):
         response = api.create_key(name)
 
         if not response.get("success"):
-            loader.error("Failed to create API Key.")
+            loader.error("Failed to create key.")
             return
 
-        loader.success()
-
-        loader.next()
-        time.sleep(0.2)
         loader.success()
 
         loader.next()
@@ -153,11 +171,11 @@ class KeysPage(ctk.CTkFrame):
 
         self.entry.delete(0, "end")
 
-        loader.finish("API Key created successfully!")
+        loader.finish("Key created!")
         loader.after(800, loader.destroy)
 
     # =========================
-    # DELETE
+    # DELETE KEY
     # =========================
     def delete(self, key_id):
 
