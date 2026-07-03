@@ -1,7 +1,8 @@
 const fs = require("fs");
 const path = require("path");
 
-const KEY_FILE = path.join(__dirname, "../../database/keys.json");
+const BASE = path.join(process.cwd(), "database");
+const KEY_FILE = path.join(BASE, "keys.json");
 
 module.exports = (req, res, next) => {
 

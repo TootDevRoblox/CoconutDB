@@ -2,12 +2,12 @@ const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
 
-const KEYS_FILE = path.join(process.cwd(), "database/keys.json");s
-
-console.log("🔥 KEY FILE PATH:", KEYS_FILE);
+const BASE = path.join(process.cwd(), "database");
+const KEYS_FILE = path.join(BASE, "keys.json");
 
 function loadKeys() {
     if (!fs.existsSync(KEYS_FILE)) {
+        fs.mkdirSync(BASE, { recursive: true });
         fs.writeFileSync(KEYS_FILE, JSON.stringify([]));
     }
 

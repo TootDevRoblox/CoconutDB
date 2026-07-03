@@ -6,7 +6,8 @@ const path = require("path");
 
 const router = express.Router();
 
-const STORES_FOLDER = path.join(process.cwd(), "database/stores");
+const BASE = path.join(process.cwd(), "database");
+const STORES_FOLDER = path.join(BASE, "stores");
 
 router.post("/set/:datastore/:document", (req, res) => {
 
