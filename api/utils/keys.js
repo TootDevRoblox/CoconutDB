@@ -2,7 +2,7 @@ const fs = require("fs");
 const path = require("path");
 const crypto = require("crypto");
 
-const KEYS_FILE = path.join(__dirname, "../../database/keys.json");
+const KEYS_FILE = path.join(process.cwd(), "database/keys.json");s
 
 console.log("🔥 KEY FILE PATH:", KEYS_FILE);
 
@@ -15,7 +15,10 @@ function loadKeys() {
 }
 
 function saveKeys(keys) {
-    fs.writeFileSync(KEYS_FILE, JSON.stringify(keys, null, 4));
+    const tmp = KEYS_FILE + ".tmp";
+
+    fs.writeFileSync(tmp, JSON.stringify(keys, null, 2));
+    fs.renameSync(tmp, KEYS_FILE);
 }
 
 function createKey(name) {
